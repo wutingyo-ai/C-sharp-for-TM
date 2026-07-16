@@ -21,31 +21,37 @@
         <UniformGrid Columns="3" Rows="2" Margin="0,20,11,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="301" Height="143">
             <StackPanel Margin="8">
                 <TextBlock Text="J1" FontSize="14" Foreground="Red" ForceCursor="True"/>
+                <CheckBox x:Name="ChkJ1" Content="show" IsChecked="True" Checked="ChkJoint_Changed" Unchecked="ChkJoint_Changed"/>
                 <TextBlock x:Name="TxtJ1" Text="--" FontSize="14" FontWeight="Bold"/>
             </StackPanel>
 
             <StackPanel Margin="8">
                 <TextBlock Text="J2" FontSize="14" Foreground="Blue"/>
+                <CheckBox x:Name="ChkJ2" Content="show" IsChecked="True" Checked="ChkJoint_Changed" Unchecked="ChkJoint_Changed"/>
                 <TextBlock x:Name="TxtJ2" Text="--" FontSize="15" FontWeight="Bold"/>
             </StackPanel>
 
             <StackPanel Margin="8">
                 <TextBlock Text="J3" FontSize="14" Foreground="Lime"/>
+                <CheckBox x:Name="ChkJ3" Content="show" IsChecked="True" Checked="ChkJoint_Changed" Unchecked="ChkJoint_Changed"/>
                 <TextBlock x:Name="TxtJ3" Text="--" FontSize="14" FontWeight="Bold"/>
             </StackPanel>
 
             <StackPanel Margin="8">
                 <TextBlock Text="J4" FontSize="14" Foreground="Orange"/>
+                <CheckBox x:Name="ChkJ4" Content="show" IsChecked="True" Checked="ChkJoint_Changed" Unchecked="ChkJoint_Changed"/>
                 <TextBlock x:Name="TxtJ4" Text="--" FontSize="14" FontWeight="Bold"/>
             </StackPanel>
 
             <StackPanel Margin="8">
                 <TextBlock Text="J5" FontSize="14" Foreground="Purple"/>
+                <CheckBox x:Name="ChkJ5" Content="show" IsChecked="True" Checked="ChkJoint_Changed" Unchecked="ChkJoint_Changed"/>
                 <TextBlock x:Name="TxtJ5" Text="--" FontSize="14" FontWeight="Bold"/>
             </StackPanel>
 
             <StackPanel Margin="8">
                 <TextBlock Text="J6" FontSize="14" Foreground="Brown"/>
+                <CheckBox x:Name="ChkJ6" Content="show" IsChecked="True" Checked="ChkJoint_Changed" Unchecked="ChkJoint_Changed"/>
                 <TextBlock x:Name="TxtJ6" Text="--" FontSize="14" FontWeight="Bold"/>
             </StackPanel>
         </UniformGrid>
@@ -54,9 +60,9 @@
 
         <StackPanel Orientation="Horizontal" Margin="10,337,221,69" VerticalAlignment="Bottom" HorizontalAlignment="Left">
             <TextBlock Text="Y Min:" Height="30"  Width="60"/>
-            <TextBox x:Name="TxtYMin" Height="30"  Width="60" Text="-10"/>
+            <TextBox x:Name="TxtYMin" Height="30"  Width="60" Text="-10000"/>
             <TextBlock Text="Y Max:" VerticalAlignment="Center" Height="30"  Width="60" Margin="10,0,0,0"/>
-            <TextBox x:Name="TxtYMax"  Height="30"  Width="60" Text="10"/>
+            <TextBox x:Name="TxtYMax"  Height="30"  Width="60" Text="10000"/>
             <Button Content="套用軸範圍" Click="BtnApplyAxis_Click"  Height="30"  Width="79" Margin="10,0,0,0"/>
             <TextBlock Text="更新間隔(ms):"  Height="30"  Width="83"/>
             <TextBox x:Name="TxtInterval"  Height="30"  Width="60" Text="50"/>
