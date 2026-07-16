@@ -4,6 +4,7 @@ using OxyPlot.Series;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using TmTorqueMonitor;
@@ -17,9 +18,10 @@ namespace Socket_TCP_Test
 
         public MainWindow()
         {
+            _chart = new Chart();
             InitializeComponent();
 
-            _chart = new Chart();
+            
             _chart.UiRefresh = UpdateTorqueTexts;   // Timer 觸發時一起更新文字
 
             // 若 XAML 的 PlotView 名稱不同，請改成你的 x:Name
@@ -109,6 +111,26 @@ namespace Socket_TCP_Test
             //_chart.Stop();   // 你已有的 Stop
             _chart.Reset();
         }
+
+        private void ChkJoint_Changed(object sender, RoutedEventArgs e)
+        {
+            if (sender is not CheckBox chk)
+                return;
+            // 用 Tag 標 0~5，或依 Name 判斷
+            int index = chk.Name switch
+            {
+                "ChkJ1" => 0,
+                "ChkJ2" => 1,
+                "ChkJ3" => 2,
+                "ChkJ4" => 3,
+                "ChkJ5" => 4,
+                "ChkJ6" => 5,
+                _ => -1
+            };
+            if (index < 0) return;
+            bool visible = chk.IsChecked == true;
+            _chart.SetSeriesVisible(index, visible);
+        }
     }
 
     public class Chart : IDisposable
@@ -131,6 +153,16 @@ namespace Socket_TCP_Test
             _timer.Tick += OnTimerTick;
             SetRefreshInterval(interval);
             _timer.Start();
+        }
+
+        public void SetSeriesVisible(int jointIndex, bool visible)
+        {
+            // jointIndex: 0~5 對應 J1~J6
+            if (jointIndex < 0 || jointIndex >= _jointSeries.Length)
+                return;
+
+            _jointSeries[jointIndex].IsVisible = visible;
+            PlotModel.InvalidatePlot(false);  // 只重繪，不必重算資料
         }
         public void Reset()
         {
@@ -167,9 +199,13 @@ namespace Socket_TCP_Test
             PlotModel.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
-                Title = "Torque",
+                Title = "Torque(mNm)",
                 Minimum = -50000,
-                Maximum = 50000
+                Maximum = 50000,
+                MajorStep = 10000,              // ← 重點：每 10000 一個刻度
+                MinorStep = 5000,               // 可選：中間小刻度
+                MajorGridlineStyle = LineStyle.Solid,
+                StringFormat = "0"              // 顯示 10000 而不是 1E4
             });
 
             OxyColor[] colors =
