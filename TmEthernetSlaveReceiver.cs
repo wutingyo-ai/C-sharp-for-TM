@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -71,7 +71,7 @@ namespace TmTorqueMonitor
             {
                 while (!token.IsCancellationRequested && _stream != null) //只要沒有收到取消請求，且網路串流 (_stream) 仍然存在，就一直執行迴圈。
                 {
-                    int bytesRead = await _stream.ReadAsync(readBuffer, token);
+                    int bytesRead = await _stream.ReadAsync(readBuffer, token); //等待封包資料
                     if (bytesRead <= 0)
                     {
                         System.Diagnostics.Debug.WriteLine("[ReceiveLoop] 連線已關閉 (bytesRead <= 0)");
@@ -80,8 +80,10 @@ namespace TmTorqueMonitor
 
                     string chunk = Encoding.UTF8.GetString(readBuffer, 0, bytesRead);
                     // ① 檢查：有沒有收到原始資料
-                    System.Diagnostics.Debug.WriteLine($"[Receive] 收到 {bytesRead} bytes");
-                    System.Diagnostics.Debug.WriteLine($"[Receive] 內容: {chunk}"); _buffer.Append(Encoding.UTF8.GetString(readBuffer, 0, bytesRead));
+                    //System.Diagnostics.Debug.WriteLine($"[Receive] 收到 {bytesRead} bytes");
+                    //System.Diagnostics.Debug.WriteLine($"[Receive] 內容: {chunk}");
+                    _buffer.Append(Encoding.UTF8.GetString(readBuffer, 0, bytesRead));
+                    //Console.WriteLine("Get Data!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
                     // 可能一次收到多個封包
                     while (TryExtractPacket(out string packet))
@@ -105,12 +107,12 @@ namespace TmTorqueMonitor
         {
             packet = string.Empty;
             string text = _buffer.ToString();
-            int endIndex = text.IndexOf("\r\n", StringComparison.Ordinal);
+            int endIndex = text.IndexOf("\r\n", StringComparison.Ordinal); //查找符號
             if (endIndex < 0) return false;
 
             packet = text.Substring(0, endIndex);
             _buffer.Remove(0, endIndex + 2);
-            return packet.StartsWith("$TMSVR", StringComparison.Ordinal);
+            return packet.StartsWith("$TMSVR", StringComparison.Ordinal);//檢查是否開頭為$TMSVR
         }
 
         /// <summary>解析封包並取 Joint_Torque</summary>
@@ -131,7 +133,7 @@ namespace TmTorqueMonitor
             };
 
             LatestTorque = snapshot;
-            TorqueReceived?.Invoke(snapshot);
+            TorqueReceived?.Invoke(snapshot); //invoke內可以接需傳遞參數
         }
 
         /// <summary>從 $TMSVR 封包解析 Joint_Torque 陣列</summary>
@@ -144,10 +146,10 @@ namespace TmTorqueMonitor
                 if (jsonStart < 0 || jsonEnd < 0) return null;
 
                 string json = packet.Substring(jsonStart, jsonEnd - jsonStart + 1);
-                var items = JsonSerializer.Deserialize<List<SvrItem>>(json);
+                var items = JsonSerializer.Deserialize<List<SvrItem>>(json); //反序列化分配轉變為C#定義的數據型態 名稱要一樣
                 if (items == null) return null;
 
-                var torqueItem = items.FirstOrDefault(x => x.Item == "Joint_Torque");
+                var torqueItem = items.FirstOrDefault(x => x.Item == "Joint_Torque_EST");
                 if (torqueItem?.Value == null) return null;
                 return torqueItem.Value.EnumerateArray()
                     .Select(x => x.GetDouble())
@@ -185,7 +187,17 @@ namespace TmTorqueMonitor
         public double J4 { get; set; }
         public double J5 { get; set; }
         public double J6 { get; set; }
+        
 
         public double[] ToArray() => new[] { J1, J2, J3, J4, J5, J6 };
+
+        public double Max_min(out double min )
+        {
+            double max = 50.0;
+
+            min = 1;
+            return max;
+
+        }
     }
 }
